@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おでかけ天気サポート</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <main class="container">
+        <header class="hero">
+            <div>
+                <p class="app-label">おでかけ前の準備をサポート</p>
+                <h1>おでかけ天気サポート</h1>
+                <p class="hero-text">
+                    今日の天気を確認して、傘や上着を準備しよう。
+                </p>
+            </div>
+
+            <form method="post" class="location-form">
+                <label for="city">確認する地域</label>
+
+                <div class="location-controls">
+                    <select id="city" name="city">
+                        {% for city, location in locations.items() %}
+                            <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>
+                                {{ location.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit">更新</button>
+                </div>
+            </form>
+        </header>
+
+        {% if error_message %}
+            <section class="error-card">
+                <strong>天気情報を取得できませんでした。</strong>
+                <p>{{ error_message }}</p>
+                <p>時間をおいて、もう一度更新してください。</p>
+            </section>
+        {% endif %}
+
+        {% if weather %}
+            <section class="weather-summary">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-label">TODAY</p>
+                        <h2>{{ location_name }}の天気</h2>
+                    </div>
+
+                    <p class="weather-name">{{ weather.weather_text }}</p>
+                </div>
+
+                <div class="weather-grid">
+                    <article class="weather-card temperature-card">
+                        <p class="card-label">現在の気温</p>
+                        <p class="main-value">
+                            {{ weather.current_temperature }}<span>℃</span>
+                        </p>
+                    </article>
+
+                    <article class="weather-card rain-card">
+                        <p class="card-label">今日の最大降水確率</p>
+                        <p class="main-value">
+                            {{ weather.max_rain_probability }}<span>%</span>
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="prepare-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-label">PREPARE</p>
+                        <h2>出かける準備</h2>
+                    </div>
+                </div>
+
+                <div class="recommendation-grid">
+                    <article class="recommendation-card {% if weather.need_umbrella %}umbrella-needed{% else %}umbrella-not-needed{% endif %}">
+                        <div class="recommendation-icon">☂</div>
+
+                        <div>
+                            <p class="card-label">傘</p>
+                            <p class="recommendation-text">
+                                {{ weather.umbrella_message }}
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="recommendation-card outerwear-card">
+                        <div class="recommendation-icon">🧥</div>
+
+                        <div>
+                            <p class="card-label">上着</p>
+                            <p class="recommendation-text">
+                                {{ weather.outerwear_message }}
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="hourly-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-label">HOURLY</p>
+                        <h2>時間別の降水確率</h2>
+                    </div>
+
+                    <p class="hourly-note">横にスクロールできます</p>
+                </div>
+
+                <div class="hourly-list">
+                    {% for forecast in weather.hourly_forecasts %}
+                        <article class="hourly-card">
+                            <p class="hour">{{ forecast.time }}</p>
+
+                            <p class="hourly-temperature">
+                                {{ forecast.temperature }}℃
+                            </p>
+
+                            <progress
+                                class="rain-progress"
+                                value="{{ forecast.rain_probability }}"
+                                max="100"
+                            ></progress>
+
+                            <p class="rain-probability">
+                                {{ forecast.rain_probability }}%
+                            </p>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <footer>
+            天気データ：Open-Meteo
+        </footer>
+    </main>
+</body>
+</html>
