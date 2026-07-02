@@ -13,14 +13,16 @@
                 <p class="app-label">おでかけ前の準備をサポート</p>
                 <h1>おでかけ天気サポート</h1>
                 <p class="hero-text">
-                    今日の天気を確認して、傘や上着を準備しよう。
+                    出発時刻の天気を確認して、持ち物を準備しよう。
                 </p>
             </div>
 
             <form method="post" class="location-form">
-                <label for="city">確認する地域</label>
+                <input type="hidden" name="action" value="update_settings">
 
-                <div class="location-controls">
+                <div class="form-field">
+                    <label for="city">確認する地域</label>
+
                     <select id="city" name="city">
                         {% for city, location in locations.items() %}
                             <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>
@@ -28,9 +30,21 @@
                             </option>
                         {% endfor %}
                     </select>
-
-                    <button type="submit">更新</button>
                 </div>
+
+                <div class="form-field">
+                    <label for="departure_hour">出発予定時刻</label>
+
+                    <select id="departure_hour" name="departure_hour">
+                        {% for hour in departure_hours %}
+                            <option value="{{ hour }}" {% if hour == selected_departure_hour %}selected{% endif %}>
+                                {{ "%02d:00"|format(hour) }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit">更新</button>
             </form>
         </header>
 
@@ -78,6 +92,25 @@
                     </div>
                 </div>
 
+                <article class="departure-card">
+                    <div>
+                        <p class="card-label">出発予定時刻</p>
+                        <p class="departure-time">{{ weather.departure_time }}</p>
+                    </div>
+
+                    <div class="departure-metrics">
+                        <div class="departure-metric">
+                            <p class="card-label">予想気温</p>
+                            <p>{{ weather.departure_temperature }}℃</p>
+                        </div>
+
+                        <div class="departure-metric">
+                            <p class="card-label">降水確率</p>
+                            <p>{{ weather.departure_rain_probability }}%</p>
+                        </div>
+                    </div>
+                </article>
+
                 <div class="recommendation-grid">
                     <article class="recommendation-card {% if weather.need_umbrella %}umbrella-needed{% else %}umbrella-not-needed{% endif %}">
                         <div class="recommendation-icon">☂</div>
@@ -101,6 +134,81 @@
                         </div>
                     </article>
                 </div>
+            </section>
+
+            <section class="checklist-section">
+                <div class="section-heading">
+                    <div>
+                        <p class="section-label">CHECKLIST</p>
+                        <h2>持ち物チェック</h2>
+                    </div>
+
+                    <p class="checklist-count">
+                        準備済み {{ checked_count }} / {{ checklist.all_items|length }}
+                    </p>
+                </div>
+
+                <p class="checklist-note">
+                    地域または出発予定時刻を変更すると、チェックはリセットされます。
+                </p>
+
+                <form method="post" class="checklist-form">
+                    <input type="hidden" name="action" value="save_checklist">
+
+                    {% if checklist.weather_items %}
+                        <div class="checklist-group">
+                            <h3>天気に合わせた持ち物</h3>
+
+                            <div class="checklist-grid">
+                                {% for item in checklist.weather_items %}
+                                    <label class="check-item">
+                                        <input
+                                            type="checkbox"
+                                            name="checked_items"
+                                            value="{{ item.id }}"
+                                            {% if item.id in checked_item_ids %}checked{% endif %}
+                                        >
+
+                                        <span class="check-item-icon">{{ item.icon }}</span>
+
+                                        <span>
+                                            <strong>{{ item.name }}</strong>
+                                            <small>{{ item.description }}</small>
+                                        </span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="checklist-group">
+                        <h3>毎日の持ち物</h3>
+
+                        <div class="checklist-grid">
+                            {% for item in checklist.daily_items %}
+                                <label class="check-item">
+                                    <input
+                                        type="checkbox"
+                                        name="checked_items"
+                                        value="{{ item.id }}"
+                                        {% if item.id in checked_item_ids %}checked{% endif %}
+                                    >
+
+                                    <span class="check-item-icon">{{ item.icon }}</span>
+
+                                    <span>
+                                        <strong>{{ item.name }}</strong>
+                                        <small>{{ item.description }}</small>
+                                    </span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="checklist-save-button">
+                        チェックを保存
+                    </button>
+                </form>
             </section>
 
             <section class="hourly-section">

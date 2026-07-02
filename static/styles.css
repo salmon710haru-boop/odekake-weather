@@ -46,23 +46,26 @@ body {
 }
 
 .location-form {
-    min-width: 250px;
+    min-width: 370px;
+    display: grid;
+    grid-template-columns: minmax(130px, 1fr) minmax(120px, 0.8fr) auto;
+    gap: 10px;
+    align-items: end;
     align-self: center;
     padding: 16px;
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.18);
 }
 
+.form-field {
+    min-width: 0;
+}
+
 .location-form label {
     display: block;
     margin-bottom: 8px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: bold;
-}
-
-.location-controls {
-    display: flex;
-    gap: 8px;
 }
 
 select,
@@ -80,6 +83,7 @@ select {
 }
 
 button {
+    height: 42px;
     padding: 10px 16px;
     color: #ffffff;
     background: #1d4ed8;
@@ -93,6 +97,7 @@ button:hover {
 
 .weather-summary,
 .prepare-section,
+.checklist-section,
 .hourly-section,
 .error-card {
     margin-top: 24px;
@@ -129,7 +134,9 @@ button:hover {
 }
 
 .weather-card,
-.recommendation-card {
+.recommendation-card,
+.departure-card,
+.checklist-group {
     border-radius: 18px;
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
@@ -160,6 +167,53 @@ button:hover {
 .main-value span {
     margin-left: 4px;
     font-size: 1.3rem;
+}
+
+.departure-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 16px;
+    padding: 24px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #65a30d, #a3e635);
+    box-shadow: 0 12px 26px rgba(101, 163, 13, 0.22);
+}
+
+.departure-card .card-label {
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.departure-time {
+    margin: 12px 0 0;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.departure-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.departure-metric {
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.88);
+    color: #365314;
+    text-align: center;
+}
+
+.departure-metric .card-label {
+    color: #4d7c0f;
+}
+
+.departure-metric p:last-child {
+    margin: 8px 0 0;
+    color: #365314;
+    font-size: 1.3rem;
+    font-weight: bold;
 }
 
 .recommendation-card {
@@ -207,6 +261,92 @@ button:hover {
     margin: 6px 0 0;
     font-size: 1.05rem;
     font-weight: bold;
+}
+
+.checklist-count {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 999px;
+    color: #365314;
+    background: #ecfccb;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.checklist-note {
+    margin: 0 0 14px;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.checklist-form {
+    display: grid;
+    gap: 16px;
+}
+
+.checklist-group {
+    padding: 20px;
+    background: #ffffff;
+}
+
+.checklist-group h3 {
+    margin: 0 0 14px;
+    font-size: 1rem;
+}
+
+.checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.check-item:hover {
+    background: #f8fafc;
+}
+
+.check-item input {
+    width: 20px;
+    height: 20px;
+    accent-color: #65a30d;
+}
+
+.check-item-icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 50%;
+    background: #ecfccb;
+    font-size: 1.3rem;
+}
+
+.check-item strong,
+.check-item small {
+    display: block;
+}
+
+.check-item small {
+    margin-top: 3px;
+    color: #64748b;
+}
+
+.checklist-save-button {
+    justify-self: end;
+    background: #65a30d;
+}
+
+.checklist-save-button:hover {
+    background: #4d7c0f;
 }
 
 .hourly-note {
@@ -298,15 +438,38 @@ footer {
     .location-form {
         width: 100%;
         min-width: 0;
+        grid-template-columns: 1fr;
+    }
+
+    .location-form button {
+        width: 100%;
     }
 
     .weather-grid,
-    .recommendation-grid {
+    .recommendation-grid,
+    .checklist-grid {
         grid-template-columns: 1fr;
     }
 
     .section-heading {
         align-items: start;
         flex-direction: column;
+    }
+
+    .departure-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .departure-metrics {
+        width: 100%;
+    }
+
+    .departure-metric {
+        width: 100%;
+    }
+
+    .checklist-save-button {
+        width: 100%;
     }
 }
